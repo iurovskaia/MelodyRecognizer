@@ -9,11 +9,8 @@ include_directories(include)
 add_executable(melody_recognizer
     main.cpp
     src/wav_reader.cpp
+    src/fourier.cpp
     src/fingerprint.cpp
     src/database.cpp
     src/recognizer.cpp
-)
-include_directories(
-    include
-    C:/libs/eigen/eigen-master
 )
