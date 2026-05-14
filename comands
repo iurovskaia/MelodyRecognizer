@@ -1,0 +1,5 @@
+mkdir build                                - создать вспомогательную папку 
+cd build
+cmake .. -G "MinGW Makefiles"              - запуск cmake , создается файл собирается при помощи g++
+cmake --build .                            - сборка проекта
+.\melody_recognizer.exe
