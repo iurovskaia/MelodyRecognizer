@@ -19,5 +19,7 @@ std::vector<int> loadFingerprint(
     const std::string& filename
 );
 
-std::vector<Melody> loadDatabase(); 
+std::vector<Melody> loadDatabase(
+    const std::string& databaseFile
+);
 //загрузить всю базу данных

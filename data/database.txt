@@ -1,0 +1,15 @@
+piano data/fingerprints/piano.txt
+song1 data/fingerprints/song1.txt
+song10 data/fingerprints/song10.txt
+song11 data/fingerprints/song11.txt
+song12 data/fingerprints/song12.txt
+song13 data/fingerprints/song13.txt
+song2 data/fingerprints/song2.txt
+song3 data/fingerprints/song3.txt
+song4 data/fingerprints/song4.txt
+song5 data/fingerprints/song5.txt
+song6 data/fingerprints/song6.txt
+song7 data/fingerprints/song7.txt
+song8 data/fingerprints/song8.txt
+song9 data/fingerprints/song9.txt
+test data/fingerprints/test.txt

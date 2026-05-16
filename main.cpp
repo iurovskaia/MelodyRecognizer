@@ -1,4 +1,6 @@
 #include <iostream>
+#include <string>
+#include <vector>
 
 #include "wav_reader.h"
 #include "fingerprint.h"
@@ -6,42 +8,54 @@
 #include "recognizer.h"
 
 int main() {
-    AudioData audio = readWav("../data/wav/test.wav");
+    // Путь к WAV-файлу, который хотим распознать
+    std::string inputFile = "../data/wav/query/query.wav";
 
+    // Путь к файлу базы данных
+    std::string databaseFile = "../data/database.txt";
+
+    // Считываем WAV-файл и получаем аудиосигнал
+    AudioData audio = readWav(inputFile);
+
+    // Проверяем, удалось ли считать файл
     if (audio.samples.empty()) {
-        std::cout << "Failed to read audio" << std::endl;
+        std::cout << "Error: could not read input WAV file" << std::endl;
         return 1;
     }
 
-    std::cout << "Building fingerprint..." << std::endl;
-
+    // Строим отпечаток для входного сигнала
     std::vector<int> queryFingerprint =
         buildFingerprint(audio.samples, audio.sampleRate);
 
-    std::cout << "Fingerprint:" << std::endl;
-
-    for (int x : queryFingerprint) {
-        std::cout << x << " ";
+    // Проверяем, получилось ли построить отпечаток
+    if (queryFingerprint.empty()) {
+        std::cout << "Error: fingerprint is empty" << std::endl;
+        return 1;
     }
 
-    std::cout << std::endl;
+    // Сохраняем отпечаток входного файла,
+    // чтобы можно было посмотреть его вручную
+    saveFingerprint(
+        "../data/fingerprints/query.txt",
+        queryFingerprint
+    );
 
-    std::vector<std::string> names = {
-        "Test song",
-        "Boring song"
-    };
+    // Загружаем базу данных мелодий
+    std::vector<Melody> database =
+        loadDatabase(databaseFile);
 
-    std::vector<std::string> files = {
-        "../data/fingerprints/test_song.txt",
-        "../data/fingerprints/boring_song.txt"
-    };
+    // Проверяем, что база данных не пустая
+    if (database.empty()) {
+        std::cout << "Error: database is empty" << std::endl;
+        return 1;
+    }
 
-    auto database = loadDatabase(names, files);
-
+    // Сравниваем входной отпечаток с базой
+    // и получаем название самой похожей мелодии
     std::string result =
         recognizeMelody(queryFingerprint, database);
 
-    std::cout << std::endl;
+    // Выводим результат
     std::cout << "Recognized melody: "
               << result << std::endl;
 

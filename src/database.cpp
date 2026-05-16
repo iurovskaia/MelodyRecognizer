@@ -1,44 +1,104 @@
 #include "database.h"
+
 #include <fstream>
+#include <iostream>
 
 void saveFingerprint(
     const std::string& filename,
     const std::vector<int>& fingerprint
 ) {
-    std::ofstream file(filename); //открываем файл для записи
+    // Открываем файл для записи
+    std::ofstream file(filename);
 
-    for (int i = 0; i < fingerprint.size(); i++) { //проходим по всем числам отпечатка
-        file << fingerprint[i] << " "; //записываем каждое число в файл с пробелами
+    // Проверяем, открылся ли файл
+    if (!file) {
+        std::cout << "Error: cannot save fingerprint to file "
+                  << filename << std::endl;
+
+        return;
+    }
+
+    // Проходим по всем числам fingerprint
+    for (int i = 0; i < fingerprint.size(); i++) {
+
+        // Записываем числа в файл через пробел
+        file << fingerprint[i] << " ";
     }
 }
 
-std::vector<int> loadFingerprint( 
+std::vector<int> loadFingerprint(
     const std::string& filename
 ) {
+    // Вектор для fingerprint
     std::vector<int> fingerprint;
 
-    std::ifstream file(filename); //открываем файл для чтения
-    int value; //временная переменная для чтения
+    // Открываем файл для чтения
+    std::ifstream file(filename);
 
-    while (file >> value) { //пока файл не закончился
-        fingerprint.push_back(value); //добавляем число в вектор
+    // Проверяем, открылся ли файл
+    if (!file) {
+        std::cout << "Error: cannot open fingerprint file "
+                  << filename << std::endl;
+
+        return fingerprint;
+    }
+
+    // Временная переменная для чтения чисел
+    int value;
+
+    // Пока файл не закончился —
+    // читаем числа
+    while (file >> value) {
+
+        // Добавляем число в fingerprint
+        fingerprint.push_back(value);
     }
 
     return fingerprint;
 }
 
-std::vector<Melody> loadDatabase() { //вручную создаем базу данных из двух мелодий
+std::vector<Melody> loadDatabase(
+    const std::string& databaseFile
+) {
+    // Вектор со всей базой мелодий
     std::vector<Melody> database;
 
-    Melody testSong;
-    testSong.name = "Test song";
-    testSong.fingerprint = loadFingerprint("../data/fingerprints/test_song.txt");
-    database.push_back(testSong);
+    // Открываем файл базы данных
+    std::ifstream file(databaseFile);
 
-    Melody boringSong;
-    boringSong.name = "Boring song";
-    boringSong.fingerprint = loadFingerprint("../data/fingerprints/boring_song.txt");
-    database.push_back(boringSong);
+    // Проверяем, открылся ли файл
+    if (!file) {
+        std::cout << "Error: cannot open database file "
+                  << databaseFile << std::endl;
+
+        return database;
+    }
+
+    // Название мелодии
+    std::string name;
+
+    // Путь к fingerprint-файлу
+    std::string fingerprintFile;
+
+    // Читаем строки из database.txt
+    while (file >> name >> fingerprintFile) {
+
+        // Создаем новую мелодию
+        Melody melody;
+
+        // Сохраняем название
+        melody.name = name;
+
+        // Загружаем fingerprint из файла
+        melody.fingerprint =
+            loadFingerprint("../" + fingerprintFile);
+
+        // Если fingerprint загрузился —
+        // добавляем мелодию в базу
+        if (!melody.fingerprint.empty()) {
+            database.push_back(melody);
+        }
+    }
 
     return database;
 }
